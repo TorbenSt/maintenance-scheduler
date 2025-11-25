@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,12 @@ class TechnicianFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_id' => Company::factory(),
+            'user_id' => User::factory(),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->safeEmail(),
+            'skills' => $this->faker->randomElements(['heating', 'solar', 'plumbing', 'electrical'], rand(1, 3)),
+            'active' => true,
         ];
     }
 }

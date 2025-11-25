@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('work_areas', function (Blueprint $table) {
+        Schema::create('companies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
-
-            $table->string('name')->nullable(); // z.B. "Standard-Radius"
-            $table->decimal('center_lat', 10, 7)->nullable();
-            $table->decimal('center_lng', 10, 7)->nullable();
-            $table->unsignedInteger('radius_km')->default(25);
-
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('contact_email')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->json('settings')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('work_areas');
+        Schema::dropIfExists('companies');
     }
 };

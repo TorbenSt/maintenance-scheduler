@@ -13,8 +13,22 @@ return new class extends Migration
     {
         Schema::create('maintenance_tasks', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('maintenance_contract_id')->constrained()->cascadeOnDelete();
+
+            $table->date('due_date');          // wann soll gewartet werden
+            $table->date('booking_window_start')->nullable();
+            $table->date('booking_window_end')->nullable();
+
+            $table->enum('status', ['pending', 'proposed', 'confirmed', 'completed', 'cancelled'])
+                ->default('pending');
+
+            $table->foreignId('appointment_id')->nullable()->constrained()->nullOnDelete();
+
             $table->timestamps();
+            $table->softDeletes();
         });
+
     }
 
     /**

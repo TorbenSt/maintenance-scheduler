@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
+use App\Models\Technician;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,11 @@ class WorkdayAvailabilityFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_id' => Company::factory(),
+            'technician_id' => Technician::factory(),
+            'date' => $this->faker->dateTimeBetween('+1 day', '+30 days')->format('Y-m-d'),
+            'max_appointments' => $this->faker->numberBetween(4, 12),
+            'is_day_off' => $this->faker->boolean(20),
         ];
     }
 }

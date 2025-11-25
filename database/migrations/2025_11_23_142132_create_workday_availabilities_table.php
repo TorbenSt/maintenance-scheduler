@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('workday_availabilities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('technician_id')->nullable()->constrained()->nullOnDelete();
+
+            $table->date('date');
+            $table->unsignedInteger('max_appointments')->default(8);
+            $table->boolean('is_day_off')->default(false);
+
             $table->timestamps();
         });
     }

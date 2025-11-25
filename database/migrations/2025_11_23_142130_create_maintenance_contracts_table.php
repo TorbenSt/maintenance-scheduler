@@ -13,8 +13,18 @@ return new class extends Migration
     {
         Schema::create('maintenance_contracts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('maintenance_interval_id')->constrained()->cascadeOnDelete();
+
+            $table->date('start_date');        // Start des Intervalls
+            $table->boolean('active')->default(true);
+            $table->text('notes')->nullable();
+
             $table->timestamps();
+            $table->softDeletes();
         });
+
     }
 
     /**

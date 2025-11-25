@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\AppointmentProposal;
+use App\Models\Company;
+use App\Models\Customer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,11 @@ class CustomerResponseFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_id' => Company::factory(),
+            'customer_id' => Customer::factory(),
+            'appointment_proposal_id' => AppointmentProposal::factory(),
+            'response' => $this->faker->randomElement(['accepted', 'rejected']),
+            'comment' => $this->faker->optional(0.5)->paragraph(),
         ];
     }
 }

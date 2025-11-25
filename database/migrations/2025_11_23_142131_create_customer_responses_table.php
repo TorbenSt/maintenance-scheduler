@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('customer_responses', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('appointment_proposal_id')->constrained()->cascadeOnDelete();
+
+            $table->enum('response', ['accepted', 'rejected'])->nullable();
+            $table->text('comment')->nullable(); // z.B. Wunschzeitraum bei Ablehnung
             $table->timestamps();
         });
     }

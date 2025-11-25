@@ -13,8 +13,18 @@ return new class extends Migration
     {
         Schema::create('maintenance_intervals', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+
+            $table->string('name'); // z.B. "Heizungswartung"
+            $table->text('description')->nullable();
+            $table->unsignedInteger('interval_months'); // 12
+            $table->unsignedInteger('booking_window_days')->default(30); // 30 Tage vorher
+            $table->unsignedInteger('estimated_duration_minutes')->default(60);
+
             $table->timestamps();
+            $table->softDeletes();
         });
+
     }
 
     /**

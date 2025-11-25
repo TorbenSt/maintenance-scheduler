@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Company;
+use App\Models\Customer;
+use App\Models\MaintenanceInterval;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,12 @@ class MaintenanceContractFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_id' => Company::factory(),
+            'customer_id' => Customer::factory(),
+            'maintenance_interval_id' => MaintenanceInterval::factory(),
+            'start_date' => $this->faker->date(),
+            'active' => true,
+            'notes' => $this->faker->paragraph(),
         ];
     }
 }

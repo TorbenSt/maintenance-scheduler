@@ -13,7 +13,21 @@ return new class extends Migration
     {
         Schema::create('appointment_proposals', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('maintenance_task_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
+
+            $table->foreignId('appointment_id')->nullable()->constrained()->nullOnDelete();
+
+            $table->dateTime('proposed_starts_at');
+            $table->dateTime('proposed_ends_at')->nullable();
+
+            $table->string('token')->unique(); // für Bestätigungslink
+            $table->enum('status', ['pending', 'accepted', 'rejected', 'expired'])
+                ->default('pending');
+
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
