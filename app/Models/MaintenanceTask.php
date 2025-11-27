@@ -27,6 +27,15 @@ class MaintenanceTask extends Model
         'booking_window_end' => 'date',
     ];
 
+    protected static function booted()
+    {
+        static::updated(function (MaintenanceTask $task) {
+            if ($task->isDirty('status') && $task->status === 'completed') {
+                $task->generateNextTask();
+            }
+        });
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);
@@ -46,4 +55,25 @@ class MaintenanceTask extends Model
     {
         return $this->hasMany(AppointmentProposal::class);
     }
+
+    public function generateNextTask()
+    {
+        // Contract inaktiv? -> nichts tun
+        if (!$this->contract->active) {
+            return;
+        }
+
+        $interval = $this->contract->interval;
+
+        $nextDueDate = $this->due_date->copy()->addMonths($interval->interval_months);
+
+        return $this->contract->tasks()->create([
+            'company_id' => $this->company_id,
+            'due_date' => $nextDueDate,
+            'booking_window_start' => $nextDueDate->copy()->subDays($interval->booking_window_days),
+            'booking_window_end' => $nextDueDate->copy(),
+            'status' => 'pending',
+        ]);
+    }
+
 }

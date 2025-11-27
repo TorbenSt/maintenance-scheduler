@@ -27,8 +27,9 @@ class CustomerFactory extends Factory
             'postal_code' => $this->faker->postcode(),
             'city'        => $this->faker->city(),
             'country'     => 'DE',
-            'lat'         => $this->faker->latitude(47, 55),
-            'lng'         => $this->faker->longitude(6, 14),
+            // Deutschland: ca. 47.3°N - 55.1°N (Breite), 5.9°E - 15.0°E (Länge)
+            'lat'         => $this->faker->latitude(47.3, 55.1),
+            'lng'         => $this->faker->longitude(5.9, 15.0),
         ];
     }
 }

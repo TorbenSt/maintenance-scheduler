@@ -20,8 +20,9 @@ class WorkAreaFactory extends Factory
         return [
             'company_id' => Company::factory(),
             'name' => $this->faker->words(2, true),
-            'center_lat' => $this->faker->latitude(47, 55),
-            'center_lng' => $this->faker->longitude(6, 14),
+            // Deutschland: ca. 47.3°N - 55.1°N (Breite), 5.9°E - 15.0°E (Länge)
+            'center_lat' => $this->faker->latitude(47.3, 55.1),
+            'center_lng' => $this->faker->longitude(5.9, 15.0),
             'radius_km' => $this->faker->numberBetween(5, 50),
         ];
     }
