@@ -32,7 +32,7 @@ class AppointmentProposal extends Model
         return $this->belongsTo(Company::class);
     }
 
-    public function maintenanceTask()
+    public function task()
     {
         return $this->belongsTo(MaintenanceTask::class);
     }
@@ -51,4 +51,6 @@ class AppointmentProposal extends Model
     {
         return $this->hasOne(CustomerResponse::class);
     }
+
+    
 }

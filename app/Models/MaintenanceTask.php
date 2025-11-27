@@ -76,4 +76,34 @@ class MaintenanceTask extends Model
         ]);
     }
 
+    public function generateProposals(int $count = 3)
+    {
+        $interval = $this->contract->interval;
+        $customer = $this->contract->customer;
+        $company  = $this->contract->company;
+
+        $duration = $interval->estimated_duration_minutes;
+
+        // MVP: Startzeiten werden ab booking_window_start täglich vorgeschlagen
+        $startDate = $this->booking_window_start->copy()->setTime(10, 0);
+
+        for ($i = 0; $i < $count; $i++) {
+
+            $start = $startDate->copy()->addDays($i);
+            $end   = $start->copy()->addMinutes($duration);
+
+            $this->proposals()->create([
+                'company_id'            => $company->id,
+                'customer_id'           => $customer->id,
+                'proposed_starts_at'    => $start,
+                'proposed_ends_at'      => $end,
+                'token'                 => bin2hex(random_bytes(16)),
+                'status'                => 'pending',
+            ]);
+        }
+
+        // Task-Status auf "proposed" setzen
+        $this->update(['status' => 'proposed']);
+    }
+
 }
