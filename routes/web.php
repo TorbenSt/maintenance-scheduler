@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
+use App\Http\Controllers\PublicProposalAcceptController;
+use App\Http\Controllers\PublicProposalRejectFormController;
+use App\Http\Controllers\PublicProposalRejectController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,3 +33,11 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
+
+
+Route::prefix('p')->group(function () {
+    Route::get('{token}/accept', PublicProposalAcceptController::class);
+    Route::get('{token}/reject', PublicProposalRejectFormController::class);
+    Route::post('{token}/reject', PublicProposalRejectController::class);
+});
+
