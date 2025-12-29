@@ -30,6 +30,6 @@ class CustomerResponse extends Model
 
     public function appointmentProposal()
     {
-        return $this->belongsTo(AppointmentProposal::class);
+        return $this->belongsTo(AppointmentProposal::class , 'appointment_proposal_id');
     }
 }
