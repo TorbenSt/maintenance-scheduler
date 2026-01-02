@@ -10,7 +10,7 @@ class PublicProposalAcceptController extends Controller
     {
         $proposal = AppointmentProposal::where('token', $token)->firstOrFail();
 
-        // Optional: wenn schon angenommen/abgelaufen -> freundlich reagieren
+        // Wenn schon angenommen/abgelaufen -> freundlich reagieren
         if ($proposal->status === 'accepted') {
             return response('confirmed (already accepted)', 200);
         }

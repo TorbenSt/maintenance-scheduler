@@ -10,7 +10,7 @@ class PublicProposalRejectFormController extends Controller
     {
         $proposal = AppointmentProposal::where('token', $token)->firstOrFail();
 
-        // Minimaler MVP: Plain HTML, später ersetzen wir das durch Volt/Livewire.
+        // Minimaler MVP: Später ersetzen durch Volt/Livewire.
         $html = <<<HTML
             <!doctype html>
             <html>
