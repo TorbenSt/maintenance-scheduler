@@ -35,9 +35,18 @@ Route::middleware(['auth'])->group(function () {
 });
 
 
-Route::prefix('p')->group(function () {
-    Route::get('{token}/accept', PublicProposalAcceptController::class);
-    Route::get('{token}/reject', PublicProposalRejectFormController::class);
-    Route::post('{token}/reject', PublicProposalRejectController::class);
+# Public Appointment Proposal Routes
+Route::prefix('p')->middleware('throttle:30,1')->group(function () {
+    Route::get('{token}/accept', PublicProposalAcceptController::class)
+        ->name('public.proposals.accept')
+        ->middleware('signed');
+
+    Route::get('{token}/reject', PublicProposalRejectFormController::class)
+        ->name('public.proposals.reject.form')
+        ->middleware('signed');
+
+    Route::post('{token}/reject', PublicProposalRejectController::class)
+        ->name('public.proposals.reject')
+        ->middleware('signed');
 });
 

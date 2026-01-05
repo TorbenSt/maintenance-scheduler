@@ -7,6 +7,7 @@ use App\Models\MaintenanceContract;
 use App\Models\Appointment;
 use App\Models\CustomerResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
 
 uses(RefreshDatabase::class);
 
@@ -35,12 +36,18 @@ function makeTaskWithProposals(): array {
     return [$company, $customer, $task];
 }
 
-it('accepts a proposal via token route', function () {
+it('accepts a proposal via signed token route', function () {
     [, , $task] = makeTaskWithProposals();
 
     $proposal = $task->proposals()->first();
 
-    $this->get("/p/{$proposal->token}/accept")
+    $url = URL::temporarySignedRoute(
+        'public.proposals.accept',
+        now()->addMinutes(10),
+        ['token' => $proposal->token]
+    );
+
+    $this->get($url)
         ->assertOk()
         ->assertSee('confirmed');
 
@@ -50,23 +57,35 @@ it('accepts a proposal via token route', function () {
     expect(Appointment::where('maintenance_task_id', $task->id)->exists())->toBeTrue();
 });
 
-it('shows a reject form via token route', function () {
+it('shows a reject form via signed token route', function () {
     [, , $task] = makeTaskWithProposals();
 
     $proposal = $task->proposals()->first();
 
-    $this->get("/p/{$proposal->token}/reject")
+    $url = URL::temporarySignedRoute(
+        'public.proposals.reject.form',
+        now()->addMinutes(10),
+        ['token' => $proposal->token]
+    );
+
+    $this->get($url)
         ->assertOk()
-        ->assertSee('Reject proposal')
+        ->assertSee('Termin passt nicht') // Text aus dem Formular
         ->assertSee('comment');
 });
 
-it('rejects a proposal via token route and stores customer response', function () {
+it('rejects a proposal via signed token route and stores customer response', function () {
     [, , $task] = makeTaskWithProposals();
 
     $proposal = $task->proposals()->first();
 
-    $this->post("/p/{$proposal->token}/reject", [
+    $url = URL::temporarySignedRoute(
+        'public.proposals.reject',
+        now()->addMinutes(10),
+        ['token' => $proposal->token]
+    );
+
+    $this->post($url, [
         'comment' => 'Bitte nächste Woche vormittags',
     ])->assertOk()
       ->assertSee('rejected');
@@ -78,6 +97,12 @@ it('rejects a proposal via token route and stores customer response', function (
     expect(Appointment::where('maintenance_task_id', $task->id)->exists())->toBeFalse();
 });
 
-it('returns 404 for unknown token', function () {
-    $this->get('/p/not-a-real-token/accept')->assertNotFound();
+it('returns 404 for unknown token (with signed link)', function () {
+    $url = URL::temporarySignedRoute(
+        'public.proposals.accept',
+        now()->addMinutes(10),
+        ['token' => 'not-a-real-token']
+    );
+
+    $this->get($url)->assertNotFound();
 });
