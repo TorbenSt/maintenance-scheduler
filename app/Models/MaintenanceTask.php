@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Mail\AppointmentProposalMail;
+use App\Mail\AppointmentProposalsMail;
 use Illuminate\Support\Facades\Mail;
 
 
@@ -108,13 +108,23 @@ class MaintenanceTask extends Model
         // Task-Status auf "proposed" setzen
         $this->update(['status' => 'proposed']);
 
-        foreach ($this->proposals as $proposal) {
-            if ($proposal->customer?->email) {
-                Mail::to($proposal->customer->email)
-                    ->queue(new AppointmentProposalMail($proposal));
-            }
+    }
+
+    public function sendProposalEmail(): void
+    {
+        $customer = $this->contract->customer;
+
+        if (!$customer?->email) {
+            return;
         }
 
+        $proposals = $this->proposals()->where('status', 'pending')->get();
+
+        if ($proposals->isEmpty()) {
+            return;
+        }
+
+        Mail::to($customer->email)->queue(new AppointmentProposalsMail($this, $proposals));
     }
 
 }
